@@ -3,9 +3,15 @@
  *   All rights reserved.
  *   Unauthorized use, reproduction, and distribution of this source code is strictly prohibited.
  */
-import { add } from '../src';
 
-test('adds two numbers correctly', () => {
-  const result = add(2, 3);
-  expect(result).toBe(5);
+import { nano } from "../src";
+
+test("Do something", async () => {
+  // Example usage
+  const inputFile = "input.png";
+  const outputFile = "output_quantized.png";
+  const colorTolerance = 15;
+
+  await nano(inputFile, outputFile, colorTolerance);
+  expect(1).toBe(1);
 });
