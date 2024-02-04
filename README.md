@@ -22,5 +22,23 @@ nano("in.png", "out.png", 10);
  - Color palette limitation
  - Removal of error diffusion
 
+## Results
+
+### Default settings
+Average reduction of 50-70% compared to the original file size.
+Usually no visible loss of quality.
+
+### Very high
+Average reduction of 90-95% compared to the original file size.
+Noticeable but not too bad loss of quality.
+
+### Extreme
+Average reduction of 95-99% compared to the original file size.
+Visible loss of quality.
+
+This is an example of what extreme compression can do to an image (97% reduction):
+![Input](examples/in.png)
+![Output](examples/out.png)
+
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
