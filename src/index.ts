@@ -46,7 +46,7 @@ export async function nano(inputFile: string, outputFile: string, colorTolerance
     console.log(`Image quantized with color tolerance: ${colorTolerance}`);
 
     // Save the modified image
-    await sharp(pixelData, { raw: { width: info.width, height: info.height, channels: 3 } })
+    await sharp(pixelData, { raw: { width: info.width, height: info.height, channels: info.channels } })
       .png({ compressionLevel: 9, adaptiveFiltering: true, colors: 128, dither: 0 })
       .toFile(outputFile);
 
