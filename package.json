@@ -25,5 +25,9 @@
   },
   "dependencies": {
     "sharp": "^0.33.1"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   }
 }
