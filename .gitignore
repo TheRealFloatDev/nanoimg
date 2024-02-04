@@ -7,4 +7,5 @@
 
 # Build files
 /dist
-/output_quantized.png
+input.png
+output_quantized.png
