@@ -6,6 +6,7 @@
 
 import { nano } from "../src";
 import { stat } from "fs/promises";
+import { EXTREME, VERY_HIGH } from "../src/presets";
 
 test("Do something", async () => {
   // Example usage
@@ -13,13 +14,13 @@ test("Do something", async () => {
   const outputFile = "output_quantized.png";
   const colorTolerance = 15;
 
-  await nano(inputFile, outputFile);
+  await nano(inputFile, outputFile, EXTREME);
 
   // Log the file sizes and the difference
   const inputStats = await stat(inputFile).then((stats) => stats.size);
   const outputStats = await stat(outputFile).then((stats) => stats.size);
   console.log(`Input file size: ${inputStats} bytes`);
   console.log(`Output file size: ${outputStats} bytes`);
-  console.log(`File size difference: ${inputStats - outputStats} bytes / ${((outputStats / inputStats) * 100).toFixed(2)}%`);
+  console.log(`File size difference: ${inputStats - outputStats} bytes or ${(((inputStats - outputStats) / inputStats) * 100).toFixed(2)}%`);
   expect(1).toBe(1);
 });
