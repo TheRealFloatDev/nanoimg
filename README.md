@@ -55,5 +55,12 @@ This is an example of what extreme compression can do to an image (97% reduction
 ![Input](examples/in.png)
 ![Output](examples/out.png)
 
+## To do
+ - [ ] Color averaging
+ - [ ] Better tests
+ - [ ] More documentation
+ - [ ] Support for more output formats
+ - [ ] Support for outputting to buffer
+
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
