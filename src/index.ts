@@ -98,11 +98,17 @@ const defaultConfig: Configuration = {
   quality: 90,
 };
 
-export async function nano(
-  inputFile: string,
-  outputFile: string,
-  options: Configuration = defaultConfig
-): Promise<void> {
+export async function nano({
+  inputFile,
+  inputBuffer,
+  outputFile,
+  options = defaultConfig,
+}: {
+  inputFile?: string;
+  inputBuffer?: Buffer;
+  outputFile?: string;
+  options?: Configuration;
+}): Promise<void | Buffer> {
   /* -- Fix ten breakage -- */
   if (options.colorTolerance === 10) {
     options.colorTolerance = 10.01;
@@ -111,7 +117,20 @@ export async function nano(
 
   try {
     // Read the input PNG file
-    const data = await fs.readFile(inputFile);
+    if (!inputFile && !inputBuffer) {
+      throw new Error("No input file or buffer provided");
+    }
+
+    if (inputFile && inputBuffer) {
+      throw new Error("Both input file and buffer provided");
+    }
+
+    let data;
+    if (inputFile) {
+      data = await fs.readFile(inputFile);
+    } else {
+      data = inputBuffer;
+    }
 
     // Get the pixel data
     const { data: pixelData, info } = await sharp(data)
@@ -138,21 +157,25 @@ export async function nano(
     /* -- Color quantization -- */
 
     // Save the modified image
-    await sharp(pixelData, {
+    const instance = sharp(pixelData, {
       raw: {
         width: info.width,
         height: info.height,
         channels: options.enableAlphaStripping ? 3 : info.channels, // Strip alpha channel if required
       },
-    })
-      .png({
-        compressionLevel: 9,
-        adaptiveFiltering: options.enableAdaptiveFiltering,
-        colors: options.enableColorLimit ? options.colorLimit : undefined,
-        dither: options.floidSteinbergDitheringLevel,
-        quality: options.enableQualityReduction ? options.quality : undefined,
-      })
-      .toFile(outputFile);
+    }).png({
+      compressionLevel: 9,
+      adaptiveFiltering: options.enableAdaptiveFiltering,
+      colors: options.enableColorLimit ? options.colorLimit : undefined,
+      dither: options.floidSteinbergDitheringLevel,
+      quality: options.enableQualityReduction ? options.quality : undefined,
+    });
+
+    if (outputFile) {
+      await instance.toFile(outputFile);
+    } else {
+      return await instance.toBuffer();
+    }
 
     console.log(`Output file saved: ${outputFile}`);
   } catch (err) {
