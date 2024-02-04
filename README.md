@@ -16,7 +16,7 @@ nano("in.png", "out.png", 10);
 
 ## Used techniques
  - Color Quantization
- - Color Averaging
+ - [To do] Color Averaging
  - Image compression
  - Adaptive row filtering
  - Color palette limitation
