@@ -1,6 +1,6 @@
 {
   "name": "nanoimg",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "The art of making image files incredibly small.",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",

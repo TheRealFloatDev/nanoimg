@@ -4,7 +4,7 @@ Can be used to compress images drastically without losing too much quality. Can 
 
 ## Installation
 ```bash
-npm install npm-library-template
+npm install nanoimg
 ```
 
 ## Usage
