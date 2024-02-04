@@ -12,7 +12,7 @@ interface RGBColor {
   b: number;
 }
 
-type Configuration = {
+export type Configuration = {
   /**
    * Enable color quantization
    * If true, the image will be quantized to reduce the number of colors
