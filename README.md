@@ -52,8 +52,8 @@ Average reduction of 95-99% compared to the original file size.
 Visible loss of quality.
 
 This is an example of what extreme compression can do to an image (97% reduction):
-![Input](examples/in.png)
-![Output](examples/out.png)
+![Input](https://github.com/TheRealFloatDev/nanoimg/blob/master/examples/in.png?raw=true)
+![Output](https://github.com/TheRealFloatDev/nanoimg/blob/master/examples/out.png?raw=true)
 
 ## To do
  - [ ] Color averaging
