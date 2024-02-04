@@ -11,7 +11,22 @@ npm install npm-library-template
 ```javascript
 import { nano } from 'nanoimg';
 
-nano("in.png", "out.png", 10);
+// Default settings
+nano("in.png", "out.png");
+
+// Custom settings
+const options = {
+  enableColorQuantization: true,
+  colorTolerance: 10,
+  enableAlphaStripping: false,
+  enableAdaptiveFiltering: true,
+  floidSteinbergDitheringLevel: 0,
+  enableColorLimit: false,
+  colorLimit: 256,
+  enableQualityReduction: true,
+  quality: 90,
+};
+nano("in.png", "out.png", options);
 ```
 
 ## Used techniques
