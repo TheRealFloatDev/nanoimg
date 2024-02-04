@@ -12,6 +12,6 @@ test("Do something", async () => {
   const outputFile = "output_quantized.png";
   const colorTolerance = 15;
 
-  await nano(inputFile, outputFile, colorTolerance);
+  await nano(inputFile, outputFile);
   expect(1).toBe(1);
 });
