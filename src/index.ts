@@ -12,6 +12,26 @@ interface RGBColor {
   b: number;
 }
 
+type Configuration = {
+  /**
+   * Used for color quantization
+   * Represents the color tolerance meaning the maximum difference between two colors to be considered the same
+   * @default 10
+   * @minimum 1
+   * @maximum 100
+   */
+  colorTolerance: number;
+}
+
+/**
+ * Default configuration
+ * Used when no configuration is provided
+ */
+const defaultConfig: Configuration = {
+  colorTolerance: 10,
+};
+
+
 export async function nano(inputFile: string, outputFile: string, colorTolerance: number): Promise<void> {
 
   /* -- Fix ten breakage -- */
