@@ -3,8 +3,8 @@
  *   All rights reserved.
  *   Unauthorized use, reproduction, and distribution of this source code is strictly prohibited.
  */
-import sharp from 'sharp';
-import { promises as fs } from 'fs';
+import sharp from "sharp";
+import { promises as fs } from "fs";
 
 interface RGBColor {
   r: number;
@@ -28,7 +28,7 @@ type Configuration = {
    * @minimum 1
    * @maximum 100
    */
-  colorTolerance: number
+  colorTolerance: number;
   /**
    * Enable alpha channel stripping
    * If true, the alpha channel will be removed from the image
@@ -80,7 +80,7 @@ type Configuration = {
    * @maximum 100
    */
   quality: number;
-}
+};
 
 /**
  * Default configuration
@@ -98,12 +98,14 @@ const defaultConfig: Configuration = {
   quality: 90,
 };
 
-
-export async function nano(inputFile: string, outputFile: string, colorTolerance: number): Promise<void> {
-
+export async function nano(
+  inputFile: string,
+  outputFile: string,
+  options: Configuration = defaultConfig
+): Promise<void> {
   /* -- Fix ten breakage -- */
-  if (colorTolerance === 10) {
-    colorTolerance = 10.01;
+  if (options.colorTolerance === 10) {
+    options.colorTolerance = 10.01;
   }
   /* -- Fix ten breakage -- */
 
@@ -112,29 +114,44 @@ export async function nano(inputFile: string, outputFile: string, colorTolerance
     const data = await fs.readFile(inputFile);
 
     // Get the pixel data
-    const { data: pixelData, info } = await sharp(data).raw().toBuffer({ resolveWithObject: true });
+    const { data: pixelData, info } = await sharp(data)
+      .raw()
+      .toBuffer({ resolveWithObject: true });
 
-    // Perform color quantization
-    for (let i = 0; i < pixelData.length; i += 4) {
-      // Extract RGB values
-      const r = pixelData[i];
-      const g = pixelData[i + 1];
-      const b = pixelData[i + 2];
+    /* -- Color quantization -- */
+    if (options.enableColorQuantization) {
+      for (let i = 0; i < pixelData.length; i += 4) {
+        // Extract RGB values
+        const r = pixelData[i];
+        const g = pixelData[i + 1];
+        const b = pixelData[i + 2];
 
-      // Quantize colors by averaging similar colors
-      const avgColor = quantizeColor(r, g, b, colorTolerance);
+        // Quantize colors by averaging similar colors
+        const avgColor = quantizeColor(r, g, b, options.colorTolerance);
 
-      // Update pixel data with averaged color
-      pixelData[i] = avgColor.r;
-      pixelData[i + 1] = avgColor.g;
-      pixelData[i + 2] = avgColor.b;
+        // Update pixel data with averaged color
+        pixelData[i] = avgColor.r;
+        pixelData[i + 1] = avgColor.g;
+        pixelData[i + 2] = avgColor.b;
+      }
     }
-
-    console.log(`Image quantized with color tolerance: ${colorTolerance}`);
+    /* -- Color quantization -- */
 
     // Save the modified image
-    await sharp(pixelData, { raw: { width: info.width, height: info.height, channels: info.channels } })
-      .png({ compressionLevel: 9, adaptiveFiltering: true, colors: 128, dither: 0 })
+    await sharp(pixelData, {
+      raw: {
+        width: info.width,
+        height: info.height,
+        channels: options.enableAlphaStripping ? 3 : info.channels, // Strip alpha channel if required
+      },
+    })
+      .png({
+        compressionLevel: 9,
+        adaptiveFiltering: options.enableAdaptiveFiltering,
+        colors: options.enableColorLimit ? options.colorLimit : undefined,
+        dither: options.floidSteinbergDitheringLevel,
+        quality: options.enableQualityReduction ? options.quality : undefined,
+      })
       .toFile(outputFile);
 
     console.log(`Output file saved: ${outputFile}`);
@@ -144,11 +161,15 @@ export async function nano(inputFile: string, outputFile: string, colorTolerance
 }
 
 // Function to quantize colors
-function quantizeColor(r: number, g: number, b: number, tolerance: number): RGBColor {
+function quantizeColor(
+  r: number,
+  g: number,
+  b: number,
+  tolerance: number
+): RGBColor {
   return {
     r: Math.round(r / tolerance) * tolerance,
     g: Math.round(g / tolerance) * tolerance,
     b: Math.round(b / tolerance) * tolerance,
   };
 }
-
