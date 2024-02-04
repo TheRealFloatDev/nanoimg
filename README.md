@@ -12,7 +12,15 @@ npm install nanoimg
 import { nano } from 'nanoimg';
 
 // Default settings
-nano("in.png", "out.png");
+nano({
+    inputFile: "in.png",
+    outputFile: "out.png",
+});
+
+// or
+const outputBuffer = await nano({
+    inputBuffer: buffer,
+});
 
 // Custom settings
 const options = {
@@ -26,7 +34,11 @@ const options = {
   enableQualityReduction: true,
   quality: 90,
 };
-nano("in.png", "out.png", options);
+nano({
+    inputFile: "in.png",
+    outputFile: "out.png",
+    options: options,
+});
 ```
 
 ## Used techniques
@@ -60,7 +72,8 @@ This is an example of what extreme compression can do to an image (97% reduction
  - [ ] Better tests
  - [ ] More documentation
  - [ ] Support for more output formats
- - [ ] Support for outputting to buffer
+ - [x] Support for outputting to buffer
+ - [x] Support for inputting from buffer
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
