@@ -14,13 +14,72 @@ interface RGBColor {
 
 type Configuration = {
   /**
+   * Enable color quantization
+   * If true, the image will be quantized to reduce the number of colors
+   * @default true
+   */
+  enableColorQuantization: boolean;
+  /**
    * Used for color quantization
    * Represents the color tolerance meaning the maximum difference between two colors to be considered the same
+   * Higher color tolerance means fewer colors and reduced quality
+   * The default value of 10 should not be noticeable to the human eye
    * @default 10
    * @minimum 1
    * @maximum 100
    */
-  colorTolerance: number;
+  colorTolerance: number
+  /**
+   * Enable alpha channel stripping
+   * If true, the alpha channel will be removed from the image
+   * This can reduce the file size if the image does not require transparency
+   * @default false
+   */
+  enableAlphaStripping: boolean;
+  /**
+   * Enable adaptive filtering
+   * If true, adaptive row filtering will be used to reduce the file size
+   * This can reduce the file size with minimal or no quality loss
+   * @default true
+   */
+  enableAdaptiveFiltering: boolean;
+  /**
+   * The level of Floyd-Steinberg dithering
+   * The level of dithering to apply to the image
+   * Higher levels of dithering can reduce the file size but may introduce visual artifacts, but is quite unlikely
+   * @default 0
+   */
+  floidSteinbergDitheringLevel: number;
+  /**
+   * Enable color limit
+   * If true, the number of colors in the image will be limited to the specified number
+   * This can reduce the file size but may reduce the quality of the image
+   * @default false
+   */
+  enableColorLimit: boolean;
+  /**
+   * The maximum number of colors in the image
+   * The maximum number of colors to use in the image
+   * @default 256
+   * @minimum 2
+   * @maximum 256
+   */
+  colorLimit: number;
+  /**
+   * Enable quality reduction
+   * If true, the quality of the image will be reduced to reduce the file size
+   * This can reduce the file size but will reduce the quality of the image
+   * @default false
+   */
+  enableQualityReduction: boolean;
+  /**
+   * The quality of the image
+   * The quality of the image as a percentage
+   * @default 100
+   * @minimum 1
+   * @maximum 100
+   */
+  quality: number;
 }
 
 /**
@@ -28,7 +87,15 @@ type Configuration = {
  * Used when no configuration is provided
  */
 const defaultConfig: Configuration = {
+  enableColorQuantization: true,
   colorTolerance: 10,
+  enableAlphaStripping: false,
+  enableAdaptiveFiltering: true,
+  floidSteinbergDitheringLevel: 0,
+  enableColorLimit: false,
+  colorLimit: 256,
+  enableQualityReduction: true,
+  quality: 90,
 };
 
 
