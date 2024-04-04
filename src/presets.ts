@@ -8,7 +8,7 @@ import { Configuration } from ".";
 
 export const VERY_HIGH: Configuration = {
     enableColorQuantization: false,
-    enableChromaSubsampling: true,
+    enableChromaSubsampling: false,
     colorTolerance: 25,
     enableAlphaStripping: true,
     enableAdaptiveFiltering: true,
@@ -21,7 +21,7 @@ export const VERY_HIGH: Configuration = {
 
 export const EXTREME: Configuration = {
     enableColorQuantization: false,
-    enableChromaSubsampling: true,
+    enableChromaSubsampling: false,
     colorTolerance: 25,
     enableAlphaStripping: true,
     enableAdaptiveFiltering: false,
