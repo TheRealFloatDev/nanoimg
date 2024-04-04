@@ -186,21 +186,19 @@ export async function nano({
       // Subsample the chroma channels
       const subsampledData = Buffer.alloc(ycbcrData.length);
       for (let i = 0; i < ycbcrData.length; i += 8) {
-        // Average the chroma channels
-        const cb = (ycbcrData[i + 1] + ycbcrData[i + 5]) / 2;
-        const cr = (ycbcrData[i + 2] + ycbcrData[i + 6]) / 2;
-
-        // Update the subsampled data
-        subsampledData[i] = ycbcrData[i];
-        subsampledData[i + 1] = cb;
-        subsampledData[i + 2] = cr;
-        subsampledData[i + 3] = ycbcrData[i + 3];
-
-        subsampledData[i + 4] = ycbcrData[i + 4];
-        subsampledData[i + 5] = cb;
-        subsampledData[i + 6] = cr;
-        subsampledData[i + 7] = ycbcrData[i + 7];
-      }
+        // Average the chroma channels across a block of 4 pixels
+        const cb = (ycbcrData[i + 1] + ycbcrData[i + 5] + ycbcrData[i + 9] + ycbcrData[i + 13]) / 4;
+        const cr = (ycbcrData[i + 2] + ycbcrData[i + 6] + ycbcrData[i + 10] + ycbcrData[i + 14]) / 4;
+    
+        // Update the subsampled data for each pixel in the block
+        for (let j = 0; j < 4; j++) {
+            subsampledData[i + j * 4] = ycbcrData[i + j * 4];
+            subsampledData[i + j * 4 + 1] = cb;
+            subsampledData[i + j * 4 + 2] = cr;
+            subsampledData[i + j * 4 + 3] = ycbcrData[i + j * 4 + 3];
+        }
+    }
+    
 
       // Convert the subsampled data back to RGB color space
       for (let i = 0; i < subsampledData.length; i += 4) {
