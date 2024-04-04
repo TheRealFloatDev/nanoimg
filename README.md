@@ -44,6 +44,7 @@ nano({
 ## Used techniques
  - Color Quantization
  - [To do] Color Averaging
+ - [WIP] Chroma Subsampling
  - Image compression
  - Adaptive row filtering
  - Color palette limitation

@@ -20,6 +20,12 @@ export type Configuration = {
    */
   enableColorQuantization: boolean;
   /**
+   * Enable chroma subsampling
+   * If true, the chroma channels will be subsampled to reduce the file size by half
+   * @default true
+   */
+  enableChromaSubsampling: boolean;
+  /**
    * Used for color quantization
    * Represents the color tolerance meaning the maximum difference between two colors to be considered the same
    * Higher color tolerance means fewer colors and reduced quality
@@ -86,8 +92,9 @@ export type Configuration = {
  * Default configuration
  * Used when no configuration is provided
  */
-const defaultConfig: Configuration = {
+export const defaultConfig: Configuration = {
   enableColorQuantization: true,
+  enableChromaSubsampling: false,
   colorTolerance: 10,
   enableAlphaStripping: false,
   enableAdaptiveFiltering: true,
@@ -155,6 +162,64 @@ export async function nano({
       }
     }
     /* -- Color quantization -- */
+
+    /* -- Chroma subsampling -- */
+    if (options.enableChromaSubsampling) {
+      // Convert the image to YCbCr color space
+      const ycbcrData = Buffer.alloc(pixelData.length);
+      for (let i = 0; i < pixelData.length; i += 4) {
+        const r = pixelData[i];
+        const g = pixelData[i + 1];
+        const b = pixelData[i + 2];
+
+        // Convert RGB to YCbCr
+        const y = 0.299 * r + 0.587 * g + 0.114 * b;
+        const cb = -0.168736 * r - 0.331264 * g + 0.5 * b + 128;
+        const cr = 0.5 * r - 0.418688 * g - 0.081312 * b + 128;
+
+        ycbcrData[i] = y;
+        ycbcrData[i + 1] = cb;
+        ycbcrData[i + 2] = cr;
+        ycbcrData[i + 3] = pixelData[i + 3];
+      }
+
+      // Subsample the chroma channels
+      const subsampledData = Buffer.alloc(ycbcrData.length);
+      for (let i = 0; i < ycbcrData.length; i += 8) {
+        // Average the chroma channels
+        const cb = (ycbcrData[i + 1] + ycbcrData[i + 5]) / 2;
+        const cr = (ycbcrData[i + 2] + ycbcrData[i + 6]) / 2;
+
+        // Update the subsampled data
+        subsampledData[i] = ycbcrData[i];
+        subsampledData[i + 1] = cb;
+        subsampledData[i + 2] = cr;
+        subsampledData[i + 3] = ycbcrData[i + 3];
+
+        subsampledData[i + 4] = ycbcrData[i + 4];
+        subsampledData[i + 5] = cb;
+        subsampledData[i + 6] = cr;
+        subsampledData[i + 7] = ycbcrData[i + 7];
+      }
+
+      // Convert the subsampled data back to RGB color space
+      for (let i = 0; i < subsampledData.length; i += 4) {
+        const y = subsampledData[i];
+        const cb = subsampledData[i + 1];
+        const cr = subsampledData[i + 2];
+
+        // Convert YCbCr to RGB
+        const r = y + 1.402 * (cr - 128);
+        const g = y - 0.344136 * (cb - 128) - 0.714136 * (cr - 128);
+        const b = y + 1.772 * (cb - 128);
+
+        // Update the pixel data with the converted RGB values
+        pixelData[i] = r;
+        pixelData[i + 1] = g;
+        pixelData[i + 2] = b;
+      }
+    }
+    /* -- Chroma subsampling -- */
 
     // Save the modified image
     const instance = sharp(pixelData, {
